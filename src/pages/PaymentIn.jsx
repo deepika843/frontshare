@@ -80,7 +80,6 @@ const PaymentIn = () => {
             setParties([]); // Avoid undefined errors
           }
         } catch (error) {
-          console.log(error)
           console.error("Error fetching parties:", error);
           setParties([]);
         }
