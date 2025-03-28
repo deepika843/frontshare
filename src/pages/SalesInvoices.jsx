@@ -166,6 +166,9 @@ const SalesInvoices = () => {
   const calculateSummary = () => {
     return filteredBills.reduce(
       (acc, bill) => {
+        console.log(
+          "bill",bill
+        )
         const amount = parseFloat(bill.total) || 0;
         if (bill.status === "Paid") {
           acc.paid += amount;
@@ -384,7 +387,7 @@ const SalesInvoices = () => {
                           {transaction.form?.total}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {transaction.form?.balance}
+                          {transaction.form?.receivedAmount}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span

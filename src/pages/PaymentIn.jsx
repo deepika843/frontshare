@@ -24,6 +24,8 @@ const PaymentIn = () => {
   const [paymentIn, setPaymentIn] = useState([]);
   const [addPartyNew, setAddPartyNew] = React.useState(false);
   const [selectedParty, setSelectedParty] = React.useState("");
+  const [selectedInvoice, setSelectedInvoice] = React.useState("");
+  
   const [email, setEmail] = useState(null);
   const [isChanged, setIsChanged] = useState(false);
   useEffect(() => {
@@ -42,11 +44,14 @@ const PaymentIn = () => {
   const [error, setError] = useState(null);
   const [allTransactionSettings, setAllTransactionSettings] = useState([])
 
+
   useEffect(() => {
     const fetchPhone = async () => {
       try {
         const decodedPhone = await decodeToken();
+        
         setPhone(decodedPhone);
+
       } catch (err) {
         setError(err);
       }
@@ -54,13 +59,20 @@ const PaymentIn = () => {
 
     fetchPhone();
   }, []);
-
+    const [bills, setBills] = useState([]);
+  
   useEffect(() => {
     const fetchAllParties = async () => {
-      console.log("This is our Parties", phone);
       if (phone) {
         try {
           const existingDoc = await db.get(phone);
+        setBills(existingDoc.bills || []);
+
+          // console.log("existingDoc",existingDoc?.bills)
+          existingDoc?.bills.forEach(element => {
+            console.log(element)
+            
+          });
 
           if (existingDoc?.parties) {
             setParties(existingDoc.parties);
@@ -215,6 +227,11 @@ const PaymentIn = () => {
       setSelectedParty(selectedValue);
     };
 
+    const handleInvoiceChange = (e) => {
+      const selectedValue = e.target.value;
+      setSelectedInvoice(selectedValue);
+    };
+
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg w-full max-w-3xl">
@@ -326,6 +343,28 @@ const PaymentIn = () => {
                     onChange={(e) => setModalTime(e.target.value)}
                     className="w-full p-2 border rounded-md text-sm"
                   />
+                </div>
+
+                
+                <div className="mb-4">
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Sales Invoice Number
+                  </label>
+                  <select
+                    className="w-full h-10 border border-gray-300 rounded-md text-sm"
+                    value={selectedInvoice}
+                    onChange={(e) => handleInvoiceChange(e)}
+                  >
+                    <option value="" disabled>
+                      Select Invoice No
+                    </option>
+                    {bills?.map((party) => (
+                      <option key={party.invoiceNumber} value={party.invoiceNumber}>
+                        {party.invoiceNumber} (
+                        {party.invoiceNumber === "to-receive" ? "↑" : "↓"})
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="mb-4">
